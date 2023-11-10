@@ -1,6 +1,7 @@
 import secrets
 import string
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, Request, HTTPException, status
+from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 
 from . import schemas, models, database
@@ -32,3 +33,11 @@ def create_url(url: schemas.URLBase, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(db_url)
     return db_url
+
+
+@app.get("/{url_key}")
+def forward_to_target_url(url_key: str, request: Request, db: Session = Depends(get_db)):
+    db_url = (db.query(models.URL).filter(models.URL.key == url_key, models.URL.is_active).first())
+    if db_url:
+        return RedirectResponse(url=db_url.target_url)
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Request URL not found or the key is invalid")
