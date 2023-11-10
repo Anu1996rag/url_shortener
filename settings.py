@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     database_name: str = Field(..., env="DATABASE_NAME")
 
     class Config:
-        env_file = "../.env"
+        env_file = ".env"
 
 
 @lru_cache
