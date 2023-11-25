@@ -1,14 +1,13 @@
 from pydantic import BaseModel
-from pydantic import EmailStr
 
 
 class URLBase(BaseModel):
-    target_url: EmailStr
+    target_url: str
 
 
 class ResponseModel(URLBase):
     is_active: bool
-    url: EmailStr
+    url: str
 
     class Config:
         orm_mode = True
